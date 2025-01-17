@@ -1,4 +1,4 @@
-from tkinter import Tk, Label, Entry, Button, Text, Scrollbar, END, filedialog, Frame, Checkbutton, IntVar, Menu, Toplevel, Message
+from tkinter import Tk, Label, Entry, Button, Text, Scrollbar, END, filedialog, Frame, Checkbutton, IntVar, Menu, Toplevel, Message, messagebox
 import threading
 import subprocess
 import psutil
@@ -78,15 +78,21 @@ class QuickPingTracerApp:
         self.thread = None
 
     def start_ping(self):
-        self.stop_process()
         address = self.entry.get()
+        if not address:
+            messagebox.showwarning("Warning", "Please enter an address.")
+            return
+        self.stop_process()
         continuous = self.continuous_ping.get() == 1
         self.thread = threading.Thread(target=self.run_ping, args=(address, continuous))
         self.thread.start()
 
     def start_traceroute(self):
-        self.stop_process()
         address = self.entry.get()
+        if not address:
+            messagebox.showwarning("Warning", "Please enter an address.")
+            return
+        self.stop_process()
         resolve_dns = self.dns_resolution.get() == 1
         self.thread = threading.Thread(target=self.run_traceroute, args=(address, resolve_dns))
         self.thread.start()
@@ -135,6 +141,9 @@ class QuickPingTracerApp:
         self.text_box.delete(1.0, END)
 
     def save_output(self):
+        if not self.text_box.get(1.0, END).strip():
+            messagebox.showwarning("Warning", "No data to save.")
+            return
         file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt")])
         if file_path:
             with open(file_path, 'w') as file:

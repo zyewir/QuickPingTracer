@@ -1,4 +1,0 @@
-requests
-tkinter
-subprocess
-platform
